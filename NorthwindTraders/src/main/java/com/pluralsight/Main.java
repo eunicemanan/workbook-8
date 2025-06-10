@@ -7,30 +7,30 @@ public class Main {
         String username = args[0];
         String password = args[1];
 
-        //create a connection
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/northwind",username,password);
-        System.out.println(connection);
-
         //create a SQL statement/query
         String sql = """
-                     select
-                         productid,
-                         productname,
-                         unitprice,
-                         unitsinstock
-                     from products;
-                    """;
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                 select
+                     productid,
+                     productname,
+                     unitprice,
+                     unitsinstock
+                 from products;
+                """;
 
+        try (
+        //create a connection
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/northwind", username, password);
+        //create a SQL statement
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         //execute the statement/query
-        ResultSet resultSet =  preparedStatement.executeQuery();
+        ResultSet resultSet = preparedStatement.executeQuery()){
 
         //print header row
         System.out.printf("%-4s %-40s %15s %10s%n", "Id", "Product Name", "Price", "Stock");
         System.out.println("_________________________________________________________________________________");
 
         //loop through the results and display them
-        while (resultSet.next()){
+        while (resultSet.next()) {
             int productId = resultSet.getInt("productid");
             String productName = resultSet.getString("productname");
             Double unitPrice = resultSet.getDouble("unitprice");
@@ -39,9 +39,15 @@ public class Main {
             //print row
             System.out.printf("%-4d %-40s %15.2f %10d%n", productId, productName, unitPrice, unitsInStock);
         }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
+    } catch (SQLException e) {
+        //display user friendly error message
+        System.out.println("There was an error retrieving the data. Please try again or contact support.");
+        //display error message for the developer
+        e.printStackTrace();
+    } finally {
     }
+
 }
+}
+
+
