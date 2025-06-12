@@ -1,8 +1,8 @@
-package com.pluralsight;
+package com.pluralsight.data;
 
 import java.sql.*;
 
-public class CustomerService {
+public class CustomerDAO {
     public static void displayAllCustomers(String username, String password) {
         // SQL query to retrieve customer data
         String sql = """
